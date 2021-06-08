@@ -1,0 +1,10 @@
+region=us-west-2
+stack_name=proton-prerequisites
+environment_template_arch=env-template.tar.gz
+environment_template_name=public-vpc
+service_template_arch=svc-template.tar.gz
+service_template_name=lb-fargate-service
+
+get_s3_bucket () {
+    aws --region ${region} cloudformation describe-stack-resources --stack-name proton-prerequisites | jq -r '.StackResources[] | select(.LogicalResourceId=="ProtonBucket") | .PhysicalResourceId'
+}

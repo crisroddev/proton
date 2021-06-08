@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: A test stack for learning about AWS Proton
+
+Resources:
+  ProtonBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: proton-sample-templates
+
+  ProtonServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ProtonServiceRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - proton.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        # Copied from the policy document auto-generated from the Proton console
+        - PolicyName: ProtonRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                NotAction:
+                  - organizations:*
+                  - account:*
+                Resource: "*"
+
+              - Effect: Allow
+                Action:
+                  - organizations:DescribeOrganization
+                  - account:ListRegions
+                Resource: "*"
+
+              - Effect: Allow
+                Action:
+                  - cloudformation:CancelUpdateStack
+                  - cloudformation:ContinueUpdateRollback
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:CreateStack
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:DescribeStackDriftDetectionStatus
+                  - cloudformation:DescribeStackResourceDrifts
+                  - cloudformation:DetectStackResourceDrift
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:ListChangeSets
+                  - cloudformation:ListStackResources
+                  - cloudformation:UpdateStack"
+                Resource: arn:aws:cloudformation:*:693454452852:stack/AWSProton-*
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  CodeStarConnection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: ProtonSampleConnection
+      ProviderType:   GitHub
